@@ -1,4 +1,57 @@
 <!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>My First Client Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f6f8;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 720px;
+      margin: 80px auto;
+      background: #ffffff;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+    h1 {
+      color: #222;
+    }
+    p {
+      color: #555;
+      line-height: 1.6;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 30px;
+      padding: 14px 28px;
+      background: #2563eb;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 6px;
+    }
+    .btn:hover {
+      background: #1e4ed8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>欢迎</h1>
+    <p>
+      这是一个可以交付给客户的示例网站首页。<br>
+      页面已成功部署在代码仓库中。
+    </p>
+    <a class="btn" href="#">Contact / 联系</a>
+  </div>
+</body>
+</html><!DOCTYPE html>
 <html lang="zh">
 <head>
   <meta charset="UTF-8">
@@ -33,5 +86,47 @@
   <p>请联系项目负责人</p>
 </section>
 
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8">
+  <title>USDT 支付</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .box {
+      background: #fff;
+      padding: 30px;
+      border-radius: 8px;
+      width: 300px;
+      text-align: center;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 20px;
+      background: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>USDT 支付</h2>
+    <p>金额：100 USDT</p>
+    <p>网络：TRC20</p>
+    <button onclick="alert('请向指定地址转账')">确认支付</button>
+  </div>
 </body>
 </html>
