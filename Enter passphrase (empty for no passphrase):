@@ -1,1 +1,96 @@
-1
+<style>
+    /* 龙虎选中与获胜的吸粉特效 */
+    .bet-side.selected {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: var(--gold);
+        box-shadow: inset 0 0 20px rgba(241, 196, 15, 0.4);
+    }
+    
+    /* 获胜时的爆亮呼吸灯 */
+    @keyframes win-glow-dragon {
+        0% { box-shadow: var(--inner-shadow); }
+        50% { box-shadow: inset 0 0 40px var(--blue-dragon), 0 0 20px var(--blue-dragon); border-color: #fff; }
+        100% { box-shadow: var(--inner-shadow); }
+    }
+    @keyframes win-glow-tiger {
+        0% { box-shadow: var(--inner-shadow); }
+        50% { box-shadow: inset 0 0 40px var(--orange-tiger), 0 0 20px var(--orange-tiger); border-color: #fff; }
+        100% { box-shadow: var(--inner-shadow); }
+    }
+    
+    .win-dragon { animation: win-glow-dragon 0.6s ease 3; }
+    .win-tiger { animation: win-glow-tiger 0.6s ease 3; }
+
+    /* 辅助微调：让龙虎字样更有质感 */
+    .dragon { text-shadow: 0 0 10px rgba(52, 152, 219, 0.8); }
+    .tiger { text-shadow: 0 0 10px rgba(230, 126, 34, 0.8); }
+</style>
+
+<script>
+// 扩展选中逻辑
+let currentSide = null;
+
+function selectBet(side) {
+    if(App.state.isRolling) return;
+    
+    // 清除旧选中
+    document.querySelectorAll('.bet-side').forEach(el => el.classList.remove('selected'));
+    
+    // 设为新选中
+    currentSide = side;
+    event.currentTarget.classList.add('selected');
+    
+    // 震动反馈 (手机端)
+    if(window.navigator.vibrate) window.navigator.vibrate(20);
+}
+
+// 修改后的 roll 核心联动
+App.roll = async function() {
+    const cost = this.bets[this.state.betIdx];
+    if(this.state.isRolling || this.state.bal < cost) return;
+    if(!currentSide) { alert("请先选择 龙 或 虎"); return; }
+
+    this.state.isRolling = true;
+    this.state.bal -= cost;
+    
+    // 视觉预热
+    document.getElementById('ui-hub').innerText = "开奖中";
+    document.getElementById('wheel').classList.add('blur');
+    document.querySelectorAll('.bet-side').forEach(el => el.classList.remove('win-dragon', 'win-tiger'));
+    this.updateUI();
+
+    // 1. 获取结果 (后端接口此时应返回 winIdx)
+    const winIdx = Math.floor(Math.random() * 8); 
+    const resultSide = (winIdx <= 3) ? 'DRAGON' : 'TIGER'; // 联动规则
+
+    // 2. 旋转
+    const rounds = this.state.speed === 1 ? 8 : 4;
+    const targetDeg = (360 - (this.state.deg % 360)) + (rounds * 360) - (winIdx * 45);
+    this.state.deg += targetDeg;
+    document.getElementById('wheel').style.transform = `rotate(${this.state.deg}deg)`;
+
+    // 3. 落地开奖
+    const waitTime = {1:4000, 2:2000, 3:800}[this.state.speed];
+    setTimeout(() => {
+        document.getElementById('wheel').classList.remove('blur');
+        this.state.isRolling = false;
+
+        // 判定输赢并触发爆亮
+        if(currentSide === resultSide) {
+            // 赢了：这里应用你的 90%-105% 赔付逻辑
+            const prize = cost * 2.0; 
+            this.state.bal += prize;
+            document.getElementById('ui-hub').innerText = "成功";
+            
+            // 爆亮对应的格子
+            const winClass = (resultSide === 'DRAGON') ? 'win-dragon' : 'win-tiger';
+            document.querySelector('.' + resultSide.toLowerCase()).classList.add(winClass);
+        } else {
+            document.getElementById('ui-hub').innerText = "未中";
+        }
+
+        this.updateUI();
+        if(this.state.auto) setTimeout(() => this.roll(), 1000);
+    }, waitTime);
+};
+</script>
